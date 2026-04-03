@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -14,71 +12,242 @@ import {
 
 const STORAGE_KEY = "homework-star-tracker-v2";
 
-const avatarThemes = [
-  {
-    name: "Starter Buddy",
-    badge: "Base Avatar",
-    torso: "#60a5fa",
-    arms: "#38bdf8",
-    legs: "#1d4ed8",
-    accent: "#2563eb",
-    cap: "#dbeafe",
-  },
-  {
-    name: "Rocket Champ",
-    badge: "Unlocked at ₹250",
-    torso: "#f472b6",
-    arms: "#fb7185",
-    legs: "#be185d",
-    accent: "#9d174d",
-    cap: "#fce7f3",
-  },
-  {
-    name: "Jungle Ninja",
-    badge: "Unlocked at ₹500",
-    torso: "#34d399",
-    arms: "#6ee7b7",
-    legs: "#047857",
-    accent: "#065f46",
-    cap: "#d1fae5",
-  },
-  {
-    name: "Galaxy Hero",
-    badge: "Unlocked at ₹750",
-    torso: "#8b5cf6",
-    arms: "#a78bfa",
-    legs: "#5b21b6",
-    accent: "#4c1d95",
-    cap: "#ede9fe",
-  },
-  {
-    name: "Blaze Runner",
-    badge: "Unlocked at ₹1000",
-    torso: "#fb923c",
-    arms: "#fdba74",
-    legs: "#c2410c",
-    accent: "#9a3412",
-    cap: "#ffedd5",
-  },
-  {
-    name: "Steel Knight",
-    badge: "Unlocked at ₹1250",
-    torso: "#94a3b8",
-    arms: "#cbd5e1",
-    legs: "#475569",
-    accent: "#1e293b",
-    cap: "#f1f5f9",
-  },
-  {
-    name: "Golden Legend",
-    badge: "Unlocked at ₹1500",
-    torso: "#fbbf24",
-    arms: "#fde68a",
-    legs: "#b45309",
-    accent: "#92400e",
-    cap: "#fef3c7",
-  },
+const characterNameSeeds = [
+  "Tralalero Tralala",
+  "Nubini Kekini",
+  "Agarrini la Palini",
+  "Alessio",
+  "Anpali Babel",
+  "Antonio",
+  "Aquanaut",
+  "Arachnid Family",
+  "Arcadopus",
+  "Avocadini Antilopini",
+  "Avocadini Guffo",
+  "Avocadorilla",
+  "Ay Mi Gatito",
+  "Bacuru and Egguru",
+  "Ballerina Cappuccina",
+  "Ballerina Peppermintina",
+  "Ballerino Lololo",
+  "Bambini Crostini",
+  "Bambu Bambu Sahur",
+  "Bananita Dolphinita",
+  "Bananito Bandito",
+  "Bandito Axolito",
+  "Bandito Bobritto",
+  "Belula Beluga",
+  "Bicicleteira Family",
+  "Bisonte Giuppitere",
+  "Blackhole Goat",
+  "Blueberrinni Octopusini",
+  "Boatito Auratito",
+  "Boba Panda",
+  "Bombardini Tortinii",
+  "Bombardiro Crocodilo",
+  "Bombombini Gusini",
+  "Boneca Ambalabu",
+  "Brainrot God",
+  "Brasilini Berimbini",
+  "Brr Brr Patapim",
+  "Brr es Teh Patipum",
+  "Brri Brri Bicus Dicus Bombicus",
+  "Brunito Marsito",
+  "Brutto Gialutto",
+  "Buho de Fuego",
+  "Buho de Noelo",
+  "Bulbito Bandito Traktorito",
+  "Bunito Bunito Spinito",
+  "Bunnyman",
+  "Burbaloni Loliloli",
+  "Burguro and Fryuro",
+  "Burrito Bandito",
+  "Cacasito Satalito",
+  "Cachorrito Melonito",
+  "Cacto Hipopotamo",
+  "Capi Taco",
+  "Capitano Moby",
+  "Cappuccino Assassino",
+  "Cappuccino Clownino",
+  "Caramello Filtrello",
+  "Carloo",
+  "Carrotini Brainini",
+  "Cavallo Virtuoso",
+  "Celularcini Viciosini",
+  "Centrucci Nuclucci",
+  "Cerberus",
+  "Chachechi",
+  "Chef Crabracadabra",
+  "Chicleteira Bicicleteira",
+  "Chicleteira Noelteira",
+  "Chicleteirina Bicicleteirina",
+  "Chihuanini Taconini",
+  "Chill Puppy",
+  "Chillin Chili",
+  "Chimnino",
+  "Chimpanzini Bananini",
+  "Chimpanzini Spiderini",
+  "Chipso and Queso",
+  "Chocco Bunny",
+  "Chrismasmamat",
+  "Clickerino Crabo",
+  "Cocoa Assassino",
+  "Cocofanto Elefanto",
+  "Cocosini Mama",
+  "Coffin Tung Tung Tung Sahur",
+  "Cooki and Milki",
+  "Corn Corn Corn Sahur",
+  "Crabbo Limonetta",
+  "Cuadramat and Pakrahmatmamat",
+  "Cupcake Koala",
+  "Developini Braziliaspidini",
+  "Doi Doi Do",
+  "Dolphini Jetskini",
+  "Donkeyturbo Express",
+  "Dragon Cannelloni",
+  "Dragon Family",
+  "Dragon Gingerini",
+  "Dug dug dug",
+  "Dul Dul Dul",
+  "Elefanto Frigo",
+  "Esok Sekolah",
+  "Espresso Signora",
+  "Eviledon",
+  "Extinct Ballerina",
+  "Extinct Matteo",
+  "Extinct Tralalero",
+  "Festive 67",
+  "Festive Lucky Block",
+  "Fishino Clownino",
+  "Fizzy Soda",
+  "Fluriflura",
+  "Fragola La La La",
+  "Fragrama and Chocrama",
+  "Frankentteo",
+  "Frigo Camelo",
+  "Frio Ninja",
+  "Frogato Pirato",
+  "Frogo Elfo",
+  "Ganganzelli Trulala",
+  "Gangster Footera",
+  "Garama and Madundung",
+  "Gattatino Neonino",
+  "Gattatino Nyanino",
+  "Gattito Tacoto",
+  "Giftini Spyderini",
+  "Ginger Cisterna",
+  "Ginger Gerat",
+  "Ginger Globo",
+  "Girafa Celestre",
+  "Glorbo Fruttodrillo",
+  "GOAT",
+  "Gobblino Uniciclino",
+  "Gold Elf",
+  "Gorillo Subwoofero",
+  "Gorillo Watermelondrillo",
+  "Graipuss Medussi",
+  "Granchiello Spiritell",
+  "Guerriro Digitale",
+  "Guest 666",
+  "Headless Horseman",
+  "Ho Ho Ho Sahur",
+  "Horegini Boom",
+  "Hydra Dragon Cannelloni",
+  "Ice Dragon",
+  "Jacko Jack Jack",
+  "Jacko Spaventosa",
+  "Jackorilla",
+  "Jingle Jingle Sahur",
+  "Job Job Job Sahur",
+  "John Pork",
+  "Jolly Jolly Sahur",
+  "Karker Sahur",
+  "Karkerkar Kurkur",
+  "Karkerkur Family",
+  "Ketchuru and Musturu",
+  "Ketupat Bros",
+  "Ketupat Kepat",
+  "Kings Coleslaw",
+  "Krupuk Pagi Pagi",
+  "La Casa Boo",
+  "La Cucaracha",
+  "La Extinct Grande",
+  "La Ginger Sekolah",
+  "La Grande Combinasion",
+  "La Jolly Grande",
+  "La Karkerkar Combinasion",
+  "La Sahur Combinasion",
+  "La Secret Combinasion",
+  "La Spooky Grande",
+  "La Supreme Combinasion",
+  "La Taco Combinasion",
+  "La Vacca Jacko Linterino",
+  "La Vacca Saturno Saturnita",
+  "Las Capuchinas",
+  "Las Sis",
+  "Las Tralaleritas",
+  "Las Vaquitas Saturnitas",
+  "Lavadorito Spinito",
+  "Lerulerulerule",
+  "Lionel Cactuseli",
+  "Lirilì Larilà",
+  "List List List Sahur",
+  "Los 25",
+  "Los 67",
+  "Los Bombinitos",
+  "Los Bros",
+  "Los Candies",
+  "Los Chicleteiras",
+  "Los Chihuaninis",
+  "Los Combinasionas",
+  "Los Crocodillitos"
 ];
+
+const accessorySeeds = [
+  "🦈", "⚡", "🐊", "🩰", "🥁", "☕", "⛏️", "🧱", "💚", "☁️",
+  "🟣", "🦖", "🐉", "🔥", "🪽", "🧂", "🍓", "🍔", "🍟", "🎃",
+  "🥛", "🧀", "🍫", "🍀", "🏮", "🗡️", "🧸", "🧊", "🥥", "🚽",
+  "🐼", "🕷️", "🐙", "🦌", "🚲", "🌌", "🐐", "🪐", "🍌", "🦎"
+];
+
+const paletteSeeds = [
+  { torso: "#60a5fa", arms: "#38bdf8", legs: "#1d4ed8", accent: "#2563eb", cap: "#dbeafe" },
+  { torso: "#f472b6", arms: "#fb7185", legs: "#be185d", accent: "#9d174d", cap: "#fce7f3" },
+  { torso: "#34d399", arms: "#6ee7b7", legs: "#047857", accent: "#065f46", cap: "#d1fae5" },
+  { torso: "#8b5cf6", arms: "#a78bfa", legs: "#5b21b6", accent: "#4c1d95", cap: "#ede9fe" },
+  { torso: "#fb923c", arms: "#fdba74", legs: "#c2410c", accent: "#9a3412", cap: "#ffedd5" },
+  { torso: "#94a3b8", arms: "#cbd5e1", legs: "#475569", accent: "#1e293b", cap: "#f1f5f9" },
+  { torso: "#fbbf24", arms: "#fde68a", legs: "#b45309", accent: "#92400e", cap: "#fef3c7" },
+  { torso: "#22c55e", arms: "#86efac", legs: "#15803d", accent: "#166534", cap: "#dcfce7" },
+  { torso: "#06b6d4", arms: "#67e8f9", legs: "#0e7490", accent: "#155e75", cap: "#cffafe" },
+  { torso: "#e879f9", arms: "#f5d0fe", legs: "#a21caf", accent: "#86198f", cap: "#fae8ff" },
+];
+
+const textureSeeds = [
+  "waves",
+  "neon",
+  "scales",
+  "sparkle",
+  "lava",
+  "shadow",
+  "pixel"
+];
+
+const avatarThemes = Array.from({ length: 41 }, (_, index) => {
+  const name = characterNameSeeds[index % characterNameSeeds.length];
+  const palette = paletteSeeds[index % paletteSeeds.length];
+  const accessory = accessorySeeds[index % accessorySeeds.length];
+  const texture = textureSeeds[index % textureSeeds.length];
+  const levelAmount = index * 250;
+
+  return {
+    name: index === 0 ? `${name} Starter` : `${name} Lv.${index}`,
+    badge: index === 0 ? "Base Skin" : `Unlocked at ₹${levelAmount}`,
+    ...palette,
+    accessory,
+    texture,
+  };
+});
 
 const rewardMilestones = [
   {
@@ -99,6 +268,36 @@ const rewardMilestones = [
     detail: "Unlock a brand new game reward.",
     emoji: "🎮",
   },
+  {
+    amount: 2000,
+    title: "Movie Night",
+    detail: "Unlock a special family movie night.",
+    emoji: "🎬",
+  },
+  {
+    amount: 3000,
+    title: "Fun Outing",
+    detail: "Unlock a mini outing or favorite treat day.",
+    emoji: "🎡",
+  },
+  {
+    amount: 5000,
+    title: "Super Surprise",
+    detail: "Unlock a bigger surprise reward chosen by parents.",
+    emoji: "🎁",
+  },
+  {
+    amount: 7500,
+    title: "Mega Champion",
+    detail: "Unlock a mega celebration and special badge.",
+    emoji: "🏆",
+  },
+  {
+    amount: 10000,
+    title: "Legend Reward",
+    detail: "Unlock the final legendary reward tier.",
+    emoji: "👑",
+  },
 ];
 
 const defaultForm = {
@@ -114,8 +313,15 @@ const defaultForm = {
   notes: "",
 };
 
+function dateKeyFromDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function todayKey() {
-  return new Date().toISOString().slice(0, 10);
+  return dateKeyFromDate(new Date());
 }
 
 function formatDate(dateKey) {
@@ -287,6 +493,16 @@ function playSound(kind = "save") {
 }
 
 function AvatarCard({ faceImage, theme, title, subtitle, active = false, locked = false }) {
+  const textureClass = {
+    waves: "bg-[linear-gradient(135deg,rgba(255,255,255,0.28)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.28)_50%,rgba(255,255,255,0.28)_75%,transparent_75%,transparent)] bg-[length:16px_16px]",
+    neon: "bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.35),transparent_35%),linear-gradient(135deg,rgba(255,255,255,0.15),transparent)]",
+    scales: "bg-[radial-gradient(circle_at_50%_100%,rgba(255,255,255,0.25)_22%,transparent_23%),radial-gradient(circle_at_0%_100%,rgba(255,255,255,0.18)_20%,transparent_21%)] bg-[length:18px_18px]",
+    sparkle: "bg-[radial-gradient(circle,rgba(255,255,255,0.4)_10%,transparent_12%)] bg-[length:18px_18px]",
+    lava: "bg-[linear-gradient(135deg,rgba(255,255,255,0.12)_25%,transparent_25%,transparent_50%,rgba(0,0,0,0.08)_50%,rgba(0,0,0,0.08)_75%,transparent_75%,transparent)] bg-[length:14px_14px]",
+    shadow: "bg-[linear-gradient(180deg,rgba(255,255,255,0.18),rgba(0,0,0,0.12))]",
+    pixel: "bg-[linear-gradient(90deg,rgba(255,255,255,0.12)_50%,transparent_50%),linear-gradient(rgba(255,255,255,0.12)_50%,transparent_50%)] bg-[size:12px_12px]",
+  }[theme.texture] || "";
+
   return (
     <motion.div
       whileHover={{ y: -3, scale: 1.01 }}
@@ -307,27 +523,43 @@ function AvatarCard({ faceImage, theme, title, subtitle, active = false, locked 
       <div className="rounded-[24px] bg-gradient-to-b from-sky-50 to-indigo-50 py-4">
         <div className="mx-auto flex w-full items-end justify-center">
           <div className="flex flex-col items-center">
-            <div
-              className="relative mb-2 h-20 w-20 overflow-hidden rounded-full border-4 bg-white shadow-md"
-              style={{ borderColor: theme.accent }}
-            >
-              {faceImage && !locked ? (
-                <img src={faceImage} alt="Child avatar" className="h-full w-full object-cover" />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-3xl">😎</div>
-              )}
-              <div className="absolute inset-x-0 top-0 h-4" style={{ backgroundColor: theme.cap }} />
+            <div className="relative mb-2">
+              <div
+                className="relative h-20 w-20 overflow-hidden rounded-md border-4 bg-white shadow-md"
+                style={{ borderColor: theme.accent }}
+              >
+                {faceImage && !locked ? (
+                  <img src={faceImage} alt="Child avatar" className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-3xl">{theme.accessory}</div>
+                )}
+                <div className="absolute inset-x-0 top-0 h-4" style={{ backgroundColor: theme.cap }} />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_48%,rgba(255,255,255,0.15)_48%,rgba(255,255,255,0.15)_52%,transparent_52%),linear-gradient(transparent_48%,rgba(255,255,255,0.15)_48%,rgba(255,255,255,0.15)_52%,transparent_52%)] bg-[size:16px_16px] opacity-40" />
+              </div>
+              <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-md border-2 border-white bg-slate-900 text-sm shadow">
+                {theme.accessory}
+              </div>
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="mb-1 h-14 w-16 rounded-lg shadow-sm" style={{ backgroundColor: theme.torso }} />
+              <div className="relative mb-1 h-14 w-16 overflow-hidden rounded-md shadow-sm" style={{ backgroundColor: theme.torso }}>
+                <div className={`absolute inset-0 ${textureClass} opacity-70`} />
+              </div>
               <div className="-mt-14 flex w-28 justify-between px-1">
-                <div className="h-12 w-5 rounded-lg" style={{ backgroundColor: theme.arms }} />
-                <div className="h-12 w-5 rounded-lg" style={{ backgroundColor: theme.arms }} />
+                <div className="relative h-12 w-5 overflow-hidden rounded-md" style={{ backgroundColor: theme.arms }}>
+                  <div className={`absolute inset-0 ${textureClass} opacity-50`} />
+                </div>
+                <div className="relative h-12 w-5 overflow-hidden rounded-md" style={{ backgroundColor: theme.arms }}>
+                  <div className={`absolute inset-0 ${textureClass} opacity-50`} />
+                </div>
               </div>
               <div className="mt-1 flex gap-2">
-                <div className="h-14 w-6 rounded-lg" style={{ backgroundColor: theme.legs }} />
-                <div className="h-14 w-6 rounded-lg" style={{ backgroundColor: theme.legs }} />
+                <div className="relative h-14 w-6 overflow-hidden rounded-md" style={{ backgroundColor: theme.legs }}>
+                  <div className={`absolute inset-0 ${textureClass} opacity-50`} />
+                </div>
+                <div className="relative h-14 w-6 overflow-hidden rounded-md" style={{ backgroundColor: theme.legs }}>
+                  <div className={`absolute inset-0 ${textureClass} opacity-50`} />
+                </div>
               </div>
             </div>
           </div>
@@ -459,7 +691,7 @@ export default function HomeworkStarTrackerApp() {
     .filter((item) => item.date.startsWith(thisMonthLabel))
     .reduce((sum, item) => sum + (item.totalStars || item.stars || 0), 0);
 
-  const todayWeekStart = getWeekStart(todayKey()).toISOString().slice(0, 10);
+  const todayWeekStart = dateKeyFromDate(getWeekStart(todayKey()));
   const weekStars = recordsArray
     .filter((item) => item.date >= todayWeekStart)
     .reduce((sum, item) => sum + (item.totalStars || item.stars || 0), 0);
@@ -471,22 +703,23 @@ export default function HomeworkStarTrackerApp() {
   const projectedNextCredit = pendingStars === 0 ? 7 : 7 - pendingStars;
   const previewResult = calculateStars(form);
   const calendarDays = getCalendarDays(currentMonth);
-  const rewardProgress = creditedAmount % 1000;
+  const rewardProgress = Math.min(creditedAmount, 10000);
 
   const streak = useMemo(() => {
     let count = 0;
-    const keys = Object.keys(records).sort().reverse();
     let cursor = new Date(todayKey() + "T00:00:00");
-    for (let i = 0; i < keys.length; i += 1) {
-      const key = cursor.toISOString().slice(0, 10);
+
+    while (true) {
+      const key = dateKeyFromDate(cursor);
       const entry = records[key];
       if (entry && (entry.totalStars || entry.stars || 0) > 0) {
         count += 1;
+        cursor.setDate(cursor.getDate() - 1);
       } else {
         break;
       }
-      cursor.setDate(cursor.getDate() - 1);
     }
+
     return count;
   }, [records]);
 
@@ -540,7 +773,7 @@ export default function HomeworkStarTrackerApp() {
     const reader = new FileReader();
     reader.onload = () => {
       setChildPhoto(String(reader.result || ""));
-      triggerCelebration("Photo added to the hero avatar!", "good");
+      triggerCelebration("Photo added to the blocky character!", "good");
     };
     reader.readAsDataURL(file);
   }
@@ -604,7 +837,7 @@ export default function HomeworkStarTrackerApp() {
 
               <div className="rounded-[28px] bg-white/12 p-4 backdrop-blur-md">
                 <div className="mb-3 flex items-center justify-between gap-3 text-sm text-fuchsia-50">
-                  <span>Active hero</span>
+                  <span>Active character</span>
                   <button
                     onClick={() => setSoundOn((prev) => !prev)}
                     className="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold"
@@ -647,12 +880,12 @@ export default function HomeworkStarTrackerApp() {
                   className="block w-full rounded-[20px] border border-slate-200 px-4 py-3 text-sm"
                 />
                 <p className="mt-2 text-xs text-slate-500">
-                  The face photo is placed on the hero avatar so the thumbnail looks personal and fun.
+                  The face photo is placed on the blocky character skin so the thumbnail looks personal and game-like.
                 </p>
               </div>
 
               <div className="rounded-[24px] bg-slate-50 p-4">
-                <div className="text-sm font-semibold text-slate-700">Next ₹250 unlock</div>
+                <div className="text-sm font-semibold text-slate-700">Next ₹250 character unlock</div>
                 <div className="mt-2">
                   <ProgressMeter value={pendingStars} max={7} label="Star bank progress" />
                 </div>
@@ -675,7 +908,7 @@ export default function HomeworkStarTrackerApp() {
           <div className="rounded-[32px] border border-white/60 bg-white/85 p-6 shadow-xl backdrop-blur">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <div className="text-xl font-black text-slate-900">Today's mission</div>
+                <div className="text-xl font-black text-slate-900">Today’s mission</div>
                 <div className="text-sm text-slate-500">Track homework discipline and bonus behavior stars.</div>
               </div>
               <input
@@ -754,13 +987,13 @@ export default function HomeworkStarTrackerApp() {
           <div className="rounded-[32px] border border-white/60 bg-white/85 p-6 shadow-xl backdrop-blur">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-xl font-black text-slate-900">Rewards and unlocks</div>
+                <div className="text-xl font-black text-slate-900">Rewards and character unlocks</div>
                 <div className="text-sm text-slate-500">Keep earning to unlock more fun choices.</div>
               </div>
               <div className="rounded-full bg-fuchsia-100 px-3 py-1 text-xs font-bold text-fuchsia-700">₹{creditedAmount}</div>
             </div>
 
-            <div className="mt-5 grid gap-4 md:grid-cols-3">
+            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               {rewardMilestones.map((reward) => {
                 const unlocked = creditedAmount >= reward.amount;
                 return (
@@ -781,7 +1014,7 @@ export default function HomeworkStarTrackerApp() {
             </div>
 
             <div className="mt-5 rounded-[24px] bg-slate-50 p-4">
-              <ProgressMeter value={rewardProgress} max={1000} label="Progress to the ₹1000 New Game unlock" />
+              <ProgressMeter value={rewardProgress} max={10000} label="Progress to the ₹10000 Legend Reward" />
             </div>
 
             {trendDown ? (
@@ -794,7 +1027,8 @@ export default function HomeworkStarTrackerApp() {
               </div>
             )}
 
-            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-5 max-h-[540px] overflow-y-auto rounded-[24px] border border-slate-100 p-2">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {avatarThemes.map((theme, index) => {
                 const isBase = index === 0;
                 const unlocked = isBase || index <= permanentlyUnlockedCount;
@@ -811,6 +1045,7 @@ export default function HomeworkStarTrackerApp() {
                   />
                 );
               })}
+              </div>
             </div>
           </div>
         </div>
@@ -892,7 +1127,7 @@ export default function HomeworkStarTrackerApp() {
 
           <div className="grid grid-cols-7 gap-2">
             {calendarDays.map((date) => {
-              const key = date.toISOString().slice(0, 10);
+              const key = dateKeyFromDate(date);
               const inCurrentMonth = date.getMonth() === currentMonth.getMonth();
               const entry = records[key];
               const isSelected = key === selectedDate;
