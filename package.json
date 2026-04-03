@@ -2,7 +2,7 @@
   "name": "homework-star-tracker",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://pranay136.github.io/roblox_hw/",
+  "homepage": "/roblox_hw/",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
